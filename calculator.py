@@ -1,42 +1,39 @@
 import math
 
-class Operation:
+class Operation:  #base class for all the operation
     def apply(self, a, b):
         pass
 
-class Add(Operation):
+class Add(Operation): #class for addition operation
     def apply(self, a, b):
         return a + b
 
-class Sub(Operation):
+class Sub(Operation): #class for substraction operation
     def apply(self, a, b):
         return a - b
 
-class Mul(Operation):
+class Mul(Operation): #class for multiplication operation
     def apply(self, a, b):
         return a * b
 
-class Div(Operation):
+class Div(Operation): #class for division operation
     def apply(self, a, b):
         if b == 0:
             raise ValueError("Division by zero!")
         return a / b
     
-class Percent(Operation):
+class Percent(Operation): #class for percentage operation
     def apply(self, a, b):
         return (a * b ) / 100
     
-class Square(Operation):
-    def apply(self, a):
-        return a ** 2
-    
-class Pow(Operation):
+
+class Pow(Operation): #class for exponentiation operation
     def apply(self, a, b):
         return a ** b
     
 class Sin(Operation):
     def apply(self, a, b=None):
-        return math.sin(math.radians(a)) 
+        return math.sin(math.radians(a)) # Convert degrees to radians for calculation
     
 class Cos(Operation):
     def apply(self, a, b=None):
@@ -53,6 +50,7 @@ class Sqrt(Operation):
 
 class Calculator:
     def __init__(self):
+        # Initialize operators and associate them with their respective operation
         self.operators = {
             '+': Add(),
             '-': Sub(),
@@ -64,7 +62,8 @@ class Calculator:
             'cos':Cos(),
             'tan':Tan(),
             'sqrt':Sqrt()
-        }
+        } 
+        # Define operator precedence 
         self.precedence = {
             '+': 1,
             '-': 1,
@@ -79,8 +78,9 @@ class Calculator:
         }
 
     def eval(self, expression):
+        #tokenize the input expression
         tokens = self.tokenize(expression)
-        print("Tokens:", tokens)
+        print("Tokens:", tokens) # ['2', '+', '3']
         tokens = self.eval_with_parentheses(tokens)
         print("Tokens after high precedence:", tokens)
         return self.evaluate_postfix(tokens)
@@ -93,21 +93,22 @@ class Calculator:
     def eval_with_parentheses(self,tokens):
         output =  []
         operator_stack = []
-        for token in tokens:
+        for token in tokens: # Iterate over each token in the expression
             if token.isdigit():
-                output.append(int(token))
+                output.append(int(token))   # Append numbers directly to the output
             elif token in self.operators:
                 while (operator_stack and operator_stack[-1] != '(' and
                             self.precedence.get(token, 0) <= self.precedence.get(operator_stack[-1], 0)):
                     output.append(operator_stack.pop())
                 operator_stack.append(token)
             elif token == '(':
-                operator_stack.append(token)
+                operator_stack.append(token)  # Push opening parentheses onto the stack
             elif token == ')':
                 while operator_stack and operator_stack[-1] != '(':
                     output.append(operator_stack.pop())
-                operator_stack.pop()  
+                operator_stack.pop()   # Pop '(' from stack
 
+        # Pop remaining operators from the stack
         while operator_stack:
             output.append(operator_stack.pop())
 
@@ -117,25 +118,26 @@ class Calculator:
 
     def evaluate_postfix(self, tokens):
         stack = []
-        for token in tokens:
+        for token in tokens: # Iterate over each token in postfix notation
             if isinstance(token , int):
                 stack.append(token)
             elif token in self.operators:
-                if token in ['sin','cos','tan','sqrt']:
+                if token in ['sin','cos','tan','sqrt']: #unary operation
                     a = stack.pop() 
                     result = self.operators[token].apply(a)   
-                else:  
+                else:  #binary operation
                     b = stack.pop()
                     a = stack.pop()
                     result = self.operators[token].apply(a, b)
-                stack.append(result)
+                stack.append(result)  # Push the result back to the stack
         return stack[0] if stack else 0
 
-
+#create an instance of calculator
 cal = Calculator()
 
+#input from the user
 expression = input("enter the expression:   ")
-# print(f"Received expression: {expression}")
+print(f"Received expression: {expression}")
 
 result = cal.eval(expression)
 

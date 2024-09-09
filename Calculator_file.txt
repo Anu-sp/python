@@ -1,5 +1,39 @@
-
-
-
-
-
+1) Import the math module to use some of the mathematical functions like sin,cos,tan etc
+2) Define the base class Operation for all the mathematical Operations, 
+   contains the method apply which can be derived by the other child classes to perform the specific operation.
+3) The classes Add, Sub, Mul, Div, Percent, Pow derived from the base class defines the 
+   apply method to perform specific operation, and takes two arguments a,b (floats) and returns the result(float).
+4) The classes Sin, Cos, Tan, Sqrt takes only one argument in the form radians and another is initialized to None,
+   and returns the result.
+5) Define the Calculator class with a dictionary of operator objects and their precedence levels. 
+6) Define the method eval takes the mathematical expression as input, tokenizes it, processes parentheses, 
+   and then evaluates it using postfix notation. 
+7) The tokenize method converts the input expression into a list of tokens using regular expressions.
+8) Method : eval_with_parentheses 
+   -- Converts an infix expression(2 + 3) into postfix notation(2 3 +) 
+   -- output [] : List that will store the final output
+   -- operator_stack [] : Stack used to store operators and parentheses as we process the input. 
+                          The stack helps manage operator precedence and parentheses.
+   -- for token in tokens : Loop iterates over each token. 
+   -- if token.isdigit() : If the token is a number, convert it to an integer and append it to the output list.
+   -- elif token in self.operators : If the token is an operator, need to manage it based on precedence and associativity.
+   -- Then While loop checks whether the operator on top of the stack (operator_stack[-1]) has higher or 
+      equal precedence compared to the current token. If so, we pop operators from the stack to the output list 
+      until this condition no longer holds or we encounter an opening parenthesis (.
+   -- output.append(operator_stack.pop()) : Each time we pop an operator from the stack, we append it to the output list because
+                                            it needs to be evaluated before the current operator.
+   -- operator_stack.append(token): After handling the precedence rules, need to push the current operator onto the stack.
+   -- elif token == '(' : If the token is an opening parenthesis (, we push it onto the stack. 
+   -- elif token == ')' : When we encounter a closing parenthesis ), we pop operators from the stack to the output list.
+   -- After the loop ends, check for the remaining operators in the stack, pop all of them and append them to the output. 
+   -- returns the postfix expression
+9) Method : evaluate_postfix 
+   -- stack = [] : This stack is used to store numbers as we process the postfix expression. 
+   -- Iterates through each token in the postfix expression.
+   -- if isinstance(token, int) : If the token is a number push it onto the stack.
+   -- If the operator is a unary operation, pop only one number from the stack and apply the operation, 
+      push the result back onto the stack.
+   -- For binary operations, pop two numbers from the stack (a and b), apply the operator, and push the result back onto the stack.
+   -- The result of the operation is pushed back onto the stack.
+   -- Returns the final result.
+10) Creates an instance of the Calculator class, takes user input, evaluates the expression, and prints the result. 
