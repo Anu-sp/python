@@ -10,6 +10,7 @@ print(person)
 
 
 
+
 class point:
     def __init__(self,x,y):
         self.x = x
@@ -25,3 +26,4 @@ p1 = point(1, 2)
 p2 = point(3, 4)
 p3 = p1 + p2  
 print(p3)
+

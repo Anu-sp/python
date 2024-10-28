@@ -41,18 +41,23 @@ Words = ["hello", "world", "python"]
 capitalized_words = map(str.capitalize, Words)
 print(list(capitalized_words))
 
+
 #Adding Corresponding Elements from Two Lists
 list1 = [1,2,3]
 list2 = [4,5,6]
 sums = map(lambda x,y : x+y , list1, list2)
 print(list(sums)) 
 
+
 #Extracting the First Character of Each String
 words = ['apple', 'banana','cheery']
 first_chars = map(lambda word : word[0], words)
 print(list(first_chars))
 
+
 #Converting Temperatures from Celsius to Fahrenheit
 celsius = [0, 20, 37, 100]
 fahrenheit = map(lambda c: (c * 9/5) + 32, celsius)
 print(list(fahrenheit))
+
+

@@ -2,7 +2,7 @@ class Vehical:
     def __init__(self,make,model,year):
         self.make=make
         self.model=model
-        self.year=year
+        self.year=year 
 
     def start_engine(self):
         print("vehical is started")
@@ -29,4 +29,37 @@ car1 = Car(make="Toyota", model="Camry", year=2022, number_of_doors=4)
 car1.start_engine()
 truck1 = Truck(make="Ford", model="F-150", year=2021, cargo_capacity=5)
 truck1.start_engine()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
