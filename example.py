@@ -352,3 +352,241 @@ def multiplication_table(number):
 num = int(input("Enter a number for the multiplication table: "))
 multiplication_table(num)
 
+
+#27
+import re
+from collections import defaultdict
+
+def frequency_count(input_str):
+    input_str = input_str.lower()
+    input_str = re.sub(r'[^\w\s]','',input_str)
+    words = input_str.split()
+    word_count = defaultdict(int)
+
+    for word in words:
+        word_count[word]  += 1
+    return dict(word_count)
+
+input_string = "Hello world! Hello everyone. Welcome to the world of Python."
+result = frequency_count(input_string)
+print(result)
+
+
+#28
+from collections import defaultdict 
+
+def group_by_length(words):
+    length_dict = defaultdict(list)
+    for word in words:
+        length_dict[len(word)].append(word)
+    return dict(length_dict)
+
+words = ["apple", "bat", "ball", "cat", "dog", "elephant", "fish"]
+result = group_by_length(words)
+print(result)
+
+
+#29
+import pickle
+
+class Book:
+    def __init__(self, title,author,isbn):
+        self.title = title
+        self.author = author
+        self.isbn = isbn
+
+    def __str__(self):
+        return f"Title:{self.title} ,  Author:{self.author} , ISBN :{self.isbn}"
+    
+class Library():
+    def __init__(self):
+        self.books = self.load_books()
+
+    def load_books(self):
+        try:
+            with open("books.pkl", "rb") as file:
+                return pickle.load(file)
+        except FileNotFoundError:
+            return []
+        
+    def save_books(self):
+        with open("books.pkl","wb") as file:
+            pickle.dump(self.books,file)
+
+    def add_books(self,book):
+        self.books.append(book)
+        self.save_books()
+
+    def display_books(self):
+        if self.books:
+            print("books in library")
+            for book in self.books:
+                print(book)
+        else:
+            print("no books available in the library")
+
+def main():
+    library = Library()
+    while True:
+        print("Library management System")
+        print("1.add books")
+        print("2.view books")
+        print("3.exit")
+        choice = input("enter the choice: ")
+        if choice == "1":
+            title = input("enter the title : ")
+            author = input("enter thr author : ")
+            isbn = input("enter the isbn : ") 
+            book = Book(title,author,isbn)
+            library.add_books(book)
+            print("books added")
+        elif choice == "2":
+            library.display_books()
+        elif choice == "3":
+            exit
+        else:
+            print("enter the valid input")
+    
+main()
+
+#30
+print("Hi! I am chatbot, print 'exit' to end the conversation")
+
+while True:
+    user_input = input("you: ").lower()
+
+    if 'hello' in user_input:
+        print("chatbot: hi")
+    elif 'how are you' in user_input:
+        print("I'm good , thank you")
+    elif 'exit' in user_input:
+        print("byeeee")
+        break
+    else:
+        print("error")
+
+#31
+import re
+
+def check_password_strength(password):
+    if len(password) < 8:
+        return "weak:password length should be more then 8 character"
+    if not re.search("[A-Z]",password):
+        return "weak:password shouls contain atleast one uppercase letter"
+    if not re.search("[a-z]",password):
+        return "weak:password should contain atleast one lowercase letter"
+    if not re.search("[0-9]",password):
+        return "weak:password should contain atleast one number"
+    if not re.search("[@#$%^&+=]",password):
+        return "weak:password should contain atleast one special character"
+    return  "Strong: Password is strong."
+
+password = input("Enter your password: ")
+print(check_password_strength(password))   
+
+#32
+class MenuItem:
+    def __init__(self, name, category, price):
+        self.name = name
+        self.category = category
+        self.price = price
+
+    def __str__(self):
+        return f"{self.name} ({self.category}): ${self.price:.2f}"
+
+class Drink(MenuItem):
+    def __init__(self, name, price, size):
+        super().__init__(name, "Drink", price)
+        self.size = size
+
+    def __str__(self):
+        return f"{self.name} ({self.size}): ${self.price:.2f}"
+
+class Dish(MenuItem):
+    def __init__(self, name, price, ingredients):
+        super().__init__(name, "Dish", price)
+        self.ingredients = ingredients
+
+    def __str__(self):
+        return f"{self.name} (Ingredients: {', '.join(self.ingredients)}): ${self.price:.2f}"
+
+class Order:
+    def __init__(self):
+        self.items = []
+        self.is_complete = False
+
+    def add_item(self, item):
+        self.items.append(item)
+
+    def remove_item(self, item):
+        if item in self.items:
+            self.items.remove(item)
+
+    def calculate_total(self):
+        return sum(item.price for item in self.items)
+
+    def complete_order(self):
+        self.is_complete = True
+
+class Customer:
+    def __init__(self, name):
+        self.name = name
+        self.order = Order()
+
+    def place_order(self, menu_items):
+        for item in menu_items:
+            self.order.add_item(item)
+
+    def view_order(self):
+        for item in self.order.items:
+            print(item)
+        print(f"Total: ${self.order.calculate_total():.2f}")
+
+class Restaurant:
+    def __init__(self):
+        self.tables = {}
+        self.menu = []
+
+    def add_table(self, number, customer):
+        self.tables[number] = customer
+
+    def remove_table(self, number):
+        if number in self.tables:
+            customer = self.tables[number]
+            customer.order.complete_order()
+            print(f"Table {number} completed order for {customer.name}.")
+            del self.tables[number]
+
+    def view_menu(self):
+        print("Menu:")
+        for item in self.menu:
+            print(item)
+
+    def add_menu_item(self, item):
+        self.menu.append(item)
+
+restaurant = Restaurant()
+
+restaurant.add_menu_item(Dish("Pasta", 12.99, ["tomato", "basil", "cheese"]))
+restaurant.add_menu_item(Dish("Burger", 9.99, ["beef", "lettuce", "cheese"]))
+restaurant.add_menu_item(Drink("Coffee", 2.99, "Medium"))
+restaurant.add_menu_item(Drink("Orange Juice", 3.99, "Large"))
+
+restaurant.view_menu()
+
+customer1 = Customer("Alice")
+restaurant.add_table(1, customer1)
+
+customer1.place_order([restaurant.menu[0], restaurant.menu[2]])
+
+print("\nAlice's Order:")
+customer1.view_order()
+
+restaurant.remove_table(1)
+
+
+
+
+
+
+
