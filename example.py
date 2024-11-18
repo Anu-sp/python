@@ -584,9 +584,512 @@ customer1.view_order()
 
 restaurant.remove_table(1)
 
+#33
+class Person:
+    def __init__(self, name, email, phone):
+        self.name = name
+        self.email = email
+        self.phone = phone
+
+    def __str__(self):
+        return f"{self.name}, Email: {self.email}, Phone: {self.phone}"
 
 
+class Student(Person):
+    def __init__(self, name, email, phone, student_id):
+        super().__init__(name, email, phone)
+        self.student_id = student_id
+        self.courses = []
+
+    def enroll(self, course):
+        self.courses.append(course)
+
+    def __str__(self):
+        return f"Student {self.name}, ID: {self.student_id}, Courses: {[c.course_name for c in self.courses]}"
 
 
+class Teacher(Person):
+    def __init__(self, name, email, phone, teacher_id):
+        super().__init__(name, email, phone)
+        self.teacher_id = teacher_id
+        self.assigned_courses = []
+
+    def assign_grade(self, student, course, grade):
+        print(f"Assigning grade {grade} to {student.name} in {course.course_name}")
+
+    def __str__(self):
+        return f"Teacher {self.name}, ID: {self.teacher_id}, Courses: {[c.course_name for c in self.assigned_courses]}"
+
+class Course:
+    def __init__(self, course_name, course_code):
+        self.course_name = course_name
+        self.course_code = course_code
+        self.students = []
+        self.teachers = []
+
+    def add_student(self, student):
+        self.students.append(student)
+        student.enroll(self) 
+
+    def assign_teacher(self, teacher):
+        self.teachers.append(teacher)
+        teacher.assigned_courses.append(self)  
+
+    def __str__(self):
+        return f"Course: {self.course_name}, Code: {self.course_code}, Students: {[s.name for s in self.students]}, Teachers: {[t.name for t in self.teachers]}"
 
 
+class School:
+    def __init__(self, name):
+        self.name = name
+        self.students = {}
+        self.teachers = {}
+        self.courses = {}
+
+    def add_student(self, student):
+        self.students[student.student_id] = student
+
+    def add_teacher(self, teacher):
+        self.teachers[teacher.teacher_id] = teacher
+
+    def add_course(self, course):
+        self.courses[course.course_code] = course
+
+    def enroll_student_in_course(self, student_id, course_code):
+        if student_id in self.students and course_code in self.courses:
+            student = self.students[student_id]
+            course = self.courses[course_code]
+            course.add_student(student)
+        else:
+            print("Invalid student ID or course code")
+
+    def assign_teacher_to_course(self, teacher_id, course_code):
+        if teacher_id in self.teachers and course_code in self.courses:
+            teacher = self.teachers[teacher_id]
+            course = self.courses[course_code]
+            course.assign_teacher(teacher)
+        else:
+            print("Invalid teacher ID or course code")
+
+    def __str__(self):
+        return (f"School: {self.name}, Students: {[s.name for s in self.students.values()]}, "
+                f"Teachers: {[t.name for t in self.teachers.values()]}, Courses: {[c.course_name for c in self.courses.values()]}")
+    
+
+
+if __name__ == "__main__":
+    school = School("Greenfield High")
+
+    student1 = Student("Alice", "alice@example.com", "1234567890", "S001")
+    student2 = Student("Bob", "bob@example.com", "0987654321", "S002")
+
+    teacher1 = Teacher("Dr. Smith", "smith@example.com", "5551234567", "T001")
+    teacher2 = Teacher("Ms. Johnson", "johnson@example.com", "5559876543", "T002")
+
+    course1 = Course("Math 101", "M101")
+    course2 = Course("History 201", "H201")
+
+    school.add_student(student1)
+    school.add_student(student2)
+    school.add_teacher(teacher1)
+    school.add_teacher(teacher2)
+
+    school.add_course(course1)
+    school.add_course(course2)
+
+    school.enroll_student_in_course("S001", "M101")
+    school.enroll_student_in_course("S002", "H201")
+
+    school.assign_teacher_to_course("T001", "M101")
+    school.assign_teacher_to_course("T002", "H201")
+
+    print(school)
+    
+    print(course1)
+    print(course2)
+    
+    teacher1.assign_grade(student1, course1, "A")
+
+#34
+class Flight:
+    def __init__(self, flight_number, destination, departure_time, seats_available):
+        self.flight_number = flight_number
+        self.destination = destination
+        self.departure_time = departure_time
+        self.seats_available = seats_available
+        self.capacity = seats_available 
+
+    def check_availability(self):
+        return self.seats_available > 0
+
+    def book_seat(self):
+        if self.check_availability():
+            self.seats_available -= 1
+            return True
+        else:
+            return False
+
+    def cancel_seat(self):
+        if self.seats_available < self.capacity:
+            self.seats_available += 1
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        return (f"Flight {self.flight_number} to {self.destination} at {self.departure_time}, "
+                f"Seats available: {self.seats_available}/{self.capacity}")
+
+
+class Passenger:
+    def __init__(self, name, passport_number):
+        self.name = name
+        self.passport_number = passport_number
+        self.booked_flights = []
+
+    def add_booking(self, flight):
+        self.booked_flights.append(flight)
+
+    def remove_booking(self, flight):
+        if flight in self.booked_flights:
+            self.booked_flights.remove(flight)
+
+    def __str__(self):
+        booked_flight_numbers = [flight.flight_number for flight in self.booked_flights]
+        return f"Passenger {self.name}, Passport: {self.passport_number}, Booked flights: {booked_flight_numbers}"
+
+
+class Reservation:
+    def __init__(self, passenger, flight):
+        self.passenger = passenger
+        self.flight = flight
+
+    def reserve_seat(self):
+        if self.flight.book_seat():
+            self.passenger.add_booking(self.flight)
+            print(f"Reservation successful for {self.passenger.name} on flight {self.flight.flight_number}.")
+            return True
+        else:
+            print(f"No seats available on flight {self.flight.flight_number}.")
+            return False
+
+    def cancel_reservation(self):
+        if self.flight.cancel_seat():
+            self.passenger.remove_booking(self.flight)
+            print(f"Reservation canceled for {self.passenger.name} on flight {self.flight.flight_number}.")
+            return True
+        else:
+            print(f"Cannot cancel reservation. No seat was reserved.")
+            return False
+
+
+class FlightSystem:
+    def __init__(self):
+        self.flights = {}
+        self.passengers = {}
+        self.reservations = []
+
+    def add_flight(self, flight):
+        self.flights[flight.flight_number] = flight
+
+    def register_passenger(self, passenger):
+        self.passengers[passenger.passport_number] = passenger
+
+    def make_reservation(self, passport_number, flight_number):
+        passenger = self.passengers.get(passport_number)
+        flight = self.flights.get(flight_number)
+
+        if not passenger:
+            print(f"Passenger with passport {passport_number} not found.")
+            return None
+        if not flight:
+            print(f"Flight {flight_number} not found.")
+            return None
+
+        reservation = Reservation(passenger, flight)
+        if reservation.reserve_seat():
+            self.reservations.append(reservation)
+            return reservation
+        return None
+
+    def cancel_reservation(self, passport_number, flight_number):
+        for reservation in self.reservations:
+            if (reservation.passenger.passport_number == passport_number and
+                    reservation.flight.flight_number == flight_number):
+                if reservation.cancel_reservation():
+                    self.reservations.remove(reservation)
+                return
+
+        print("Reservation not found.")
+
+    def __str__(self):
+        flights_info = "\n".join(str(flight) for flight in self.flights.values())
+        passengers_info = "\n".join(str(passenger) for passenger in self.passengers.values())
+        return f"Flights:\n{flights_info}\n\nPassengers:\n{passengers_info}"
+
+if __name__ == "__main__":
+    system = FlightSystem()
+
+    flight1 = Flight("AI101", "New York", "2024-11-10 14:00", 10)
+    flight2 = Flight("BA202", "London", "2024-11-11 16:00", 5)
+    system.add_flight(flight1)
+    system.add_flight(flight2)
+
+    passenger1 = Passenger("Alice Smith", "P001")
+    passenger2 = Passenger("Bob Johnson", "P002")
+    system.register_passenger(passenger1)
+    system.register_passenger(passenger2)
+
+    system.make_reservation("P001", "AI101")
+    system.make_reservation("P002", "BA202")
+    system.make_reservation("P001", "BA202")  
+
+    print("\nSystem state after bookings:")
+    print(system)
+
+    system.cancel_reservation("P001", "AI101")
+
+    print("\nSystem state after cancellation:")
+    print(system)
+
+#35
+#Given a number n, find the sum of the product of each pair of its digits, repeatedly until you get a single-digit answer.
+
+def sum_of_products(n):
+    digits = [int(d) for d in str(n)]
+    while len(digits) > 1 or sum(digits) >= 10:
+        products = [digits[i] * digits[j] for i in range(len(digits)) for j in range(i + 1, len(digits))]
+        digits = [int(d) for d in str(sum(products))]
+    return digits[0]
+
+print(sum_of_products(123))        
+
+#36
+# Given a number n, create two numbers: one from arranging digits in ascending order and one in descending order. 
+# Subtract the smaller from the larger and repeat until you reach a single-digit.
+
+def sum(n):
+    while n >= 10:
+        digits = sorted(str(n))
+        asc = int("".join(digits))
+        desc = int("".join(digits[::-1]))
+        n = desc - asc
+    return n
+
+print(sum(324)) 
+
+#37 Longest Consecutive Sequence
+def longest_consecutive(nums):
+    if not nums:
+        return 0
+    
+    num_set = set(nums)
+    longest_streak = 0
+
+    for num in num_set:
+        if num - 1 not in num_set:
+            current_num = num
+            current_streak = 1
+
+            while current_num + 1 in num_set:
+                current_num += 1
+                current_streak += 1
+
+            longest_streak = max(longest_streak, current_streak)
+
+    return longest_streak
+
+nums = [100, 4, 200, 1, 3, 2]
+print("Longest Consecutive Sequence Length:", longest_consecutive(nums))
+
+#38  Find Missing Number in Array
+def find_missing_number(arr):
+    n = len(arr) + 1  
+    
+    expected_sum = n * (n + 1) // 2
+   
+    actual_sum = sum(arr)
+    
+    missing_number = expected_sum - actual_sum
+    
+    return missing_number
+
+arr = [1, 2, 4, 6, 3, 7, 8]
+print("The missing number is:", find_missing_number(arr))
+
+#39
+import calendar
+
+def calendar(year, month):
+    print(calendar.month(year, month))
+
+try:
+    year = int(input("Enter the year (e.g., 2023): "))
+    month = int(input("Enter the month (1-12): "))
+
+    if 1 <= month <= 12:
+        calendar(year, month)
+    else:
+        print("Invalid month. Please enter a number between 1 and 12.")
+except ValueError:
+    print("Invalid input. Please enter a valid year and month.")
+
+#40 FizzBuzz
+#Print numbers from 1 to 100, replacing multiples of 3 with "Fizz" and multiples of 5 with "Buzz."
+
+for i in range(1, 101):  
+    if i % 3 == 0 and i % 5 == 0:  
+        print("FizzBuzz")
+    elif i % 3 == 0: 
+        print("Fizz")
+    elif i % 5 == 0:  
+        print("Buzz")
+    else:
+        print(i) 
+
+#41  Expense Tracker
+class ExpenseTracker:
+    def __init__(self):
+        self.expenses = {}
+
+    def add_expense(self, category, amount):
+        if category in self.expenses:
+            self.expenses[category] += amount
+        else:
+            self.expenses[category] = amount
+
+    def show_summary(self):
+        for category, amount in self.expenses.items():
+            print(f"{category}: ${amount}")
+
+tracker = ExpenseTracker()
+tracker.add_expense("Groceries", 150)
+tracker.add_expense("Travel", 80)
+tracker.add_expense("Groceries", 50)
+tracker.show_summary()
+
+#42 Find Pairs with Given Sum in List
+def pairs(nums,sum):
+    seen = set()
+    pairs = []
+    for num in nums:
+        complement = sum - num
+        if complement in seen :
+            pairs.append((num,complement))
+        seen.add(num)
+    return pairs
+
+nums = [1,2,3,4,5,6]
+print(pairs(nums, 7))
+    
+#43 Hospital management system
+class Patient:
+    def __init__ (self,name,age):
+        self.name = name 
+        self.age = age
+        self.medical_history = []
+        self.current_appointments = []
+
+    def add_medical_record(self,record):
+        self.medical_history.append(record)
+
+    def view_medical_history(self):
+        print(f"medical history for {self.name}")
+        for record in self.medical_history:
+            print(f"-{record}")
+
+class Doctor:
+    def __init__(self,name,specialization):
+        self.name = name 
+        self.specialization = specialization
+        self.schedule = {}
+
+    def add_availability(self,day,time):
+        if day not in self.schedule:
+            self.schedule[day] = []
+        self.schedule[day].append(time)
+
+    def view_schedule(self):
+        print(f"Schedule for Dr. {self.name} ({self.specialization}):")
+        for day, times in self.schedule.items():
+            print(f"  {day}: {', '.join(times)}")
+
+class Appointment:
+    def __init__(self,date,time,doctor,patient):
+        self.date = date
+        self.time = time
+        self.doctor =  doctor
+        self.patient = patient
+
+    def details(self):
+        return f"Appointement on {self.date} and {self.time} -Doctor:{self.doctor} , Patient:{self.patient}"
+
+class Hospital:
+    def __init__(self):
+        self.patients = []
+        self.doctors = []
+        self.appointments = []
+
+    def add_patient(self,patient):
+        self.patients.append(patient)
+
+    def add_doctor(self,doctor):
+        self.doctors.append(doctor)
+
+    def book_appointment(self,patient_name,doctor_name,date,time):
+        patient = next((p for p in self.patients if p.name == patient_name), None)
+        doctor = next((q for q in self.doctors if q.name == doctor_name), None)
+
+        if not patient:
+            print(f"Error :Patient {patient_name} not found")
+            return
+        if not doctor:
+            print(f"Error :Doctor {doctor_name} not found")
+            return
+        if date not in doctor.schedule or time not in doctor.schedule[date]:
+            print(f"Error: Dr. {doctor_name} is not available at {time} on {date}.")
+            return
+
+        appointment = Appointment(date,time,doctor,patient)
+        self.appointments.append(appointment)
+        patient.current_appointments.append(appointment)
+        doctor.schedule[date].remove(time)
+
+        print(f"Appointment booked successfully: {appointment.details()}")
+
+    def view_all_appointments(self):
+        print("All Appointments:")
+        for appointment in self.appointments:
+            print(appointment.details())
+
+if __name__ == "__main__":
+    hospital = Hospital()
+
+    doctor1 = Doctor("Smith", "Cardiology")
+    doctor1.add_availability("Monday", "10:00 AM")
+    doctor1.add_availability("Monday", "11:00 AM")
+    hospital.add_doctor(doctor1)
+
+    doctor2 = Doctor("Johnson", "Dermatology")
+    doctor2.add_availability("Tuesday", "2:00 PM")
+    hospital.add_doctor(doctor2)
+
+    patient1 = Patient("Alice", 30)
+    patient1.add_medical_record("2022: General check-up")
+    patient1.add_medical_record("2023: Follow-up on blood tests")
+    hospital.add_patient(patient1)
+
+    patient2 = Patient("Bob", 45)
+    hospital.add_patient(patient2)
+
+    hospital.book_appointment("Alice", "Smith", "Monday", "10:00 AM")
+    hospital.book_appointment("Bob", "Johnson", "Tuesday", "2:00 PM")
+    hospital.book_appointment("Alice", "Smith", "Monday", "12:00 PM")  
+
+    hospital.view_all_appointments()
+
+    doctor1.view_schedule()
+
+    patient1.view_medical_history()
+
+#44
