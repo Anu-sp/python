@@ -1093,3 +1093,128 @@ if __name__ == "__main__":
     patient1.view_medical_history()
 
 #44
+class VendingMachine:
+    def __init__ (self):
+        self.items = {
+            "chips":20,
+            "chocolate":30,
+            "soda":25,
+            "juice":35
+        }
+        self.balance = 0
+
+    def display_items(self):
+        print("Available items")
+        for items,price in self.items.items:
+            print(f"{items}: ${price}")
+
+    def insert_money(self,amount):
+        self.balance += amount
+        print(f"Current balance : ${self.balance}")
+
+    def select_items(self,item):
+        if item not in self.items:
+            print("item not available")
+            return
+        if self.balance < self.items[item]:
+            print(f"Not enough balance")
+            return
+        self.balance -= self.items[item]
+        print(f"Dispensed {item}. Remaining balance: ${self.balance}")
+
+    def return_change(self):
+        print(f"Returning change: ${self.balance}")
+        self.balance = 0
+
+machine = VendingMachine()
+machine.display_items()
+machine.insert_money(50)
+machine.select_items("chips")
+machine.return_change()
+
+#45
+def length_encoder(text):
+    if not text:
+        return ""
+    
+    compressed = []
+    count = 1
+
+    for i in range(1, len(text)):
+        if text[i] == text[i-1]:
+            count  += 1
+        else:
+            compressed.append(str(count) + text[i-1])
+            count = 1
+
+    compressed.append(str(count) + text [-1])
+    return ''.join(compressed)
+
+print(length_encoder("AAABBBCCCA"))
+
+#46
+def parentheses(n):
+    def backtrack(s,left,right):
+        if len(s) == 2*n:
+            result.append(s)
+            return
+        if left < n:
+            backtrack(s + "(", left+1, right)
+        if right < left:
+            backtrack(s + ")" , left , right+1)
+
+    result = []
+    backtrack("",0,0)
+    return result
+
+print(parentheses(2))
+
+#47
+def count_island(grid):
+    if not grid:
+        return 0
+    
+    rows, cols = len(grid), len(grid[0])
+    count = 0
+
+    def dfs(r,c):
+        if r < 0 or c < 0 or r >= rows or c >= cols or grid[r][c] == "0":
+            return
+        grid[r][c] = "0" 
+        dfs(r + 1, c)
+        dfs(r - 1, c)
+        dfs(r, c + 1)
+        dfs(r, c - 1)
+
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == "1":
+                count += 1
+                dfs(r, c)
+
+    return count
+
+island_grid = [
+    ["1", "1", "0", "0", "0"],
+    ["1", "1", "0", "0", "0"],
+    ["0", "0", "1", "0", "0"],
+    ["0", "0", "0", "1", "1"],
+]
+print(count_island(island_grid))
+
+#48
+def find_pair(nums, target):
+    seen = set()
+    pairs = set()
+
+    for num in nums:
+        complement = target - num
+        if complement in seen:
+            pairs.add(tuple(sorted((num, complement))))
+        seen.add(num)
+
+    return list(pairs)
+
+print(find_pair([1, 2, 3, 4, 5, 6], 7))
+
+#49
